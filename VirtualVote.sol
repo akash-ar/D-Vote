@@ -62,18 +62,17 @@ contract  VirtualVote {
       return(firstNames,lastNames,ages,groups,votes);
   }
 
-  function updateVoterlist(string _privateKey,bytes32 _electorId) public returns(bool success)  {
+  function updateVoterlist(string _privateKey,string _electorId) public returns(bool success)  {
 
     Voter memory newVoter;
-
-    /*newVoter.addresse = _addresse;*/
-    newVoter.electorId = _electorId;
+    /*newVoter.addresse = sha3(_privateKey);*/
+    newVoter.electorId = sha3(_electorId);
     voters.push(newVoter);
     return true;
   }
 
 
-  function getVoterlist() public constant returns(address[],bytes32[]) {
+  function getVoterlist() public constant returns(bytes32[]) {
 
     uint length = voters.length;
     address[] memory addresses = new address[](length);
@@ -83,27 +82,38 @@ contract  VirtualVote {
 
       Voter memory currentVoter;
       currentVoter = voters[i];
-      addresses[i] = currentVoter.addresse;
+      /*addresses[i] = currentVoter.addresse;*/
       electorIds[i] = currentVoter.electorId;
     }
-    return (addresses,electorIds);
+    return (electorIds);
   }
 
-  function putVote(bytes32 _firstName) public returns(bool)  {
+  function putVote(bytes32 _firstName,string _privateKey) public returns(bool)  {
 
 
     uint length = Candidates.length;
+    uint votersLength = voters.length;
+    bytes32 publicKey = sha3(_privateKey);
     bytes32 selectedName = _firstName;
-      for(uint i = 0; i < length; i++)  {
 
-        Candidate memory selectedCandidate;
-        selectedCandidate =   Candidates[i];
-        if(selectedCandidate.firstName == _firstName) {
-          Candidates[i].vote++;
-          return true;
-        }
+    for(uint i = 0; i < votersLength; i++)  {
+          if(voters[i].electorId==publicKey)  {
 
-      }
+            for(i = 0; i < length; i++)  {
+
+              Candidate memory selectedCandidate;
+              selectedCandidate =   Candidates[i];
+              if(selectedCandidate.firstName == _firstName) {
+                Candidates[i].vote++;
+                return true;
+              }
+
+            }
+          }
+
+          }
+
+
     }
 
     function getVotedlist(address a) public returns(bool status)  {
