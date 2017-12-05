@@ -66,7 +66,6 @@ contract  VirtualVote {
   function updateVoterlist(string _privateKey,string _electorId) public returns(bool success)  {
 
     Voter memory newVoter;
-    /*newVoter.addresse = sha3(_privateKey);*/
     newVoter.electorId = sha3(_electorId);
     newVoter.voted = false;
     voters.push(newVoter);
