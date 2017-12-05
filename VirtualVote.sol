@@ -18,6 +18,7 @@ contract  VirtualVote {
 
     address addresse;
     bytes32 electorId;
+    bool voted;
   }
 
   function createCandidate(
@@ -67,6 +68,7 @@ contract  VirtualVote {
     Voter memory newVoter;
     /*newVoter.addresse = sha3(_privateKey);*/
     newVoter.electorId = sha3(_electorId);
+    newVoter.voted = false;
     voters.push(newVoter);
     return true;
   }
@@ -82,7 +84,6 @@ contract  VirtualVote {
 
       Voter memory currentVoter;
       currentVoter = voters[i];
-      /*addresses[i] = currentVoter.addresse;*/
       electorIds[i] = currentVoter.electorId;
     }
     return (electorIds);
@@ -97,8 +98,8 @@ contract  VirtualVote {
     bytes32 selectedName = _firstName;
 
     for(uint i = 0; i < votersLength; i++)  {
-          if(voters[i].electorId==publicKey)  {
-
+          if(voters[i].electorId==publicKey && voters[i].voted==false)  {
+            voters[i].voted=true;
             for(i = 0; i < length; i++)  {
 
               Candidate memory selectedCandidate;
@@ -107,19 +108,8 @@ contract  VirtualVote {
                 Candidates[i].vote++;
                 return true;
               }
-
             }
           }
-
-          }
-
-
-    }
-
-    function getVotedlist(address a) public returns(bool status)  {
-      address x = this;
-      address y = a;
-      x.transfer(5);
-      return (true);
-    }
+        }
+      }
 }
